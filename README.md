@@ -1,6 +1,6 @@
 # UK business check API for JavaScript
 
-> **UK VAT: source unavailable for now.** Company, EORI and charity checks are live. UK VAT checks wait for HMRC production access: until then `vat` is `null`, `meta.sources.hmrc` is `unavailable` and `vat()` returns 503 (not counted). Get a free key at https://api.tychelabs.net/signup
+> **UK VAT checks are coming soon.** Company, EORI and charity checks are live now, so one call already gives you status, filings and risk flags. Until VAT opens, `vat` is `null`, `meta.sources.hmrc` is `unavailable` and `vat()` returns 503, which never counts against your plan. Get a free key at https://api.tychelabs.net/signup
 
 Check a UK company in one call. You get Companies House status, age, overdue accounts and confirmation statement flags, and recent filings. HMRC validates the VAT number, the Charity Commission gives charity status, and plain risk flags sit on top. Officer and PSC data come back as counts only, never personal details.
 
@@ -19,7 +19,7 @@ const api = new BusinessCheck({ apiKey: process.env.TYCHE_API_KEY });
 const { data } = await api.check('16716814', { vat: 'GB553557881' });
 
 console.log(data.company.name, data.company.status, data.company.ageYears);
-console.log('VAT valid:', data.vat?.valid); // undefined until HMRC is connected
+console.log('VAT valid:', data.vat?.valid); // filled in once UK VAT checks open
 if (data.risk !== 'none') console.log(data.flags.map((f) => `${f.severity}: ${f.message}`));
 
 const { data: matches } = await api.search('example trading');
