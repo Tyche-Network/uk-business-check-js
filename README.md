@@ -1,11 +1,11 @@
 # UK business check API for JavaScript
 
-> **Coming soon.** The business check API opens when Companies House and HMRC VAT are both connected. Keys and plans are not available yet. Vehicle keys are available now at https://api.tychelabs.net/signup?product=vehicle
+> **Company checks: coming soon.** The company check opens when Companies House and HMRC VAT are both connected. UK and EU EORI checks work today with a free key from https://api.tychelabs.net/signup
 
 Check a UK company in one call. You get Companies House status, age, overdue accounts and confirmation statement flags, and recent filings. HMRC validates the VAT number, the Charity Commission gives charity status, and plain risk flags sit on top. Officer and PSC data come back as counts only, never personal details.
 
 - No dependencies. Works on Node 18+, Deno, Bun and edge runtimes.
-- Free plan with 50 checks a month when it opens: https://api.tychelabs.net/business-api
+- Free plan with 50 checks a month: https://api.tychelabs.net/business
 - Docs: https://api.tychelabs.net/docs/business
 
 ```sh
@@ -23,6 +23,9 @@ console.log('VAT valid:', data.vat?.valid);
 if (data.risk !== 'none') console.log(data.flags.map((f) => `${f.severity}: ${f.message}`));
 
 const { data: matches } = await api.search('example trading');
+
+// UK and EU EORI numbers, on their own or in the check above ({ eori })
+const { data: eori } = await api.eori('GB123456789000');
 ```
 
 A `tl_test_` key returns sandbox data and is not metered.

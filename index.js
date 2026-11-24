@@ -1,4 +1,4 @@
-// UK business check API client: Companies House, HMRC VAT and charity status in one call.
+// UK business check API client: Companies House, HMRC VAT, EORI and charity status in one call.
 // Docs: https://api.tychelabs.net/docs/business . No dependencies; needs global fetch (Node 18+).
 export class TycheApiError extends Error {
   constructor(status, code, message, body) { super(message); this.name = 'TycheApiError'; this.status = status; this.code = code; this.body = body; }
@@ -8,7 +8,7 @@ export class BusinessCheck {
   /** @param {{ apiKey?: string, baseUrl?: string, timeoutMs?: number, fetch?: typeof fetch }} [opts] */
   constructor(opts = {}) {
     this.apiKey = opts.apiKey ?? (typeof process !== 'undefined' ? process.env.TYCHE_API_KEY : undefined);
-    if (!this.apiKey) throw new Error('Pass apiKey or set TYCHE_API_KEY. The business check API is coming soon: https://api.tychelabs.net/business-api');
+    if (!this.apiKey) throw new Error('Pass apiKey or set TYCHE_API_KEY. Get a free key at https://api.tychelabs.net/signup');
     this.baseUrl = (opts.baseUrl ?? 'https://api.tychelabs.net').replace(/\/$/, '');
     this.timeoutMs = opts.timeoutMs ?? 15000;
     this._fetch = opts.fetch ?? globalThis.fetch;
@@ -26,10 +26,11 @@ export class BusinessCheck {
     } finally { clearTimeout(t); }
   }
 
-  /** Check a company by Companies House number. Optional UK VAT number to validate. */
-  check(companyNumber, { vat, include } = {}) {
+  /** Check a company by Companies House number. Optional UK VAT and EORI numbers to validate in the same call. */
+  check(companyNumber, { vat, eori, include } = {}) {
     const q = new URLSearchParams();
     if (vat) q.set('vat', vat);
+    if (eori) q.set('eori', eori);
     if (include) q.set('include', [].concat(include).join(','));
     return this._req('GET', `/v1/companies/${encodeURIComponent(companyNumber)}${q.size ? '?' + q : ''}`);
   }
@@ -37,8 +38,10 @@ export class BusinessCheck {
   search(name) { return this._req('GET', `/v1/companies/search?q=${encodeURIComponent(name)}`); }
   /** Validate a UK VAT number with HMRC. */
   vat(vatNumber) { return this._req('GET', `/v1/vat/${encodeURIComponent(vatNumber)}`); }
+  /** Validate a UK (GB/XI) or EU EORI number. */
+  eori(eoriNumber) { return this._req('GET', `/v1/eori/${encodeURIComponent(eoriNumber)}`); }
   /** Watch a company; we POST signed events when its status or risk changes. */
-  watch(companyNumber, url) { return this._req('POST', '/v1/watches', { companyNumber, url }); }
+  watch(companyNumber, url, { events, emailDigest } = {}) { return this._req('POST', '/v1/watches', { companyNumber, url, ...(events ? { events } : {}), ...(emailDigest ? { emailDigest } : {}) }); }
   listWatches() { return this._req('GET', '/v1/watches'); }
   deleteWatch(id) { return this._req('DELETE', `/v1/watches/${encodeURIComponent(id)}`); }
   account() { return this._req('GET', '/v1/account'); }
