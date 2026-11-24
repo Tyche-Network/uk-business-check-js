@@ -1,0 +1,16 @@
+{
+  "name": "@tychelabs/uk-business-check",
+  "version": "1.0.0",
+  "description": "UK business check API client: Companies House status and filings, HMRC VAT number validation and charity status in one call, with risk flags and webhooks.",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": { ".": { "types": "./index.d.ts", "default": "./index.js" } },
+  "files": ["index.js", "index.d.ts", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "keywords": ["companies house", "companies house api", "vat number check", "hmrc vat api", "kyb", "company check", "uk", "charity commission"],
+  "homepage": "https://api.tychelabs.net/business-api",
+  "repository": { "type": "git", "url": "git+https://github.com/Tyche-Network/uk-business-check-js.git" },
+  "license": "MIT",
+  "author": "Tyche Labs Ltd <info@tychelabs.net>"
+}
